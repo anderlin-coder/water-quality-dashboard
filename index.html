@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水質數據分析工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌊 水質數據分析工具</h1>
+            <p>實時數據分析與標準格式圖表生成</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('import')">📊 1. 導入數據</button>
+            <button class="tab-button" onclick="switchTab('analysis')">📈 2. 生成圖表</button>
+            <button class="tab-button" onclick="switchTab('report')">📄 3. 數據統計</button>
+        </div>
+
+        <!-- 第 1 頁：導入數據 -->
+        <div id="import" class="tab-content active">
+            <div class="section">
+                <div class="section-title">📂 導入 CSV 數據</div>
+                <p style="margin-bottom: 15px; color: #666;">
+                    請準備 CSV 格式的數據。<br>
+                    <strong>格式：</strong> 採樣日期,監測點,分類,水溫(℃),pH值,導電度(μmho/cm),溶氧(mg/L),濁度(NTU)
+                </p>
+
+                <div class="form-group">
+                    <label for="csvFile">選擇 CSV 檔案：</label>
+                    <input type="file" id="csvFile" accept=".csv">
+                </div>
+
+                <button onclick="importData()" class="btn-primary">📤 導入數據</button>
+
+                <div id="importStatus"></div>
+
+                <div class="data-preview" id="dataPreview" style="display: none;">
+                    <h3>數據預覽</h3>
+                    <div id="previewContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第 2 頁：生成圖表 -->
+        <div id="analysis" class="tab-content">
+            <div class="section">
+                <div class="section-title">⚙️ 篩選條件</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">開始日期：</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">結束日期：</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>監測點（按 MW-01, DW-02...DW-10 順序）：</label>
+                    <div class="checkbox-group" id="siteCheckboxes"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>分類：</label>
+                    <div class="checkbox-group" id="categoryCheckboxes"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="metricSelect">選擇指標：</label>
+                    <select id="metricSelect">
+                        <option value="temperature">水溫 (℃)</option>
+                        <option value="pH">pH 值</option>
+                        <option value="conductivity">導電度 (μmho/cm)</option>
+                        <option value="dissolvedOxygen">溶氧 (mg/L)</option>
+                        <option value="turbidity">濁度 (NTU)</option>
+                    </select>
+                </div>
+
+                <button onclick="generateChart()" class="btn-primary">📊 生成標準格式圖表</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📊 圖表</div>
+                <div id="analysisStatus"></div>
+                <div class="loading" id="analysisLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>正在生成圖表...</p>
+                </div>
+                <div id="chartsContainer"></div>
+            </div>
+        </div>
+
+        <!-- 第 3 頁：數據統計 -->
+        <div id="report" class="tab-content">
+            <div class="section">
+                <div class="section-title">📄 數據統計</div>
+
+                <button onclick="generateStatistics()" class="btn-primary">📊 生成統計報告</button>
+
+                <div id="reportStatus"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📋 統計結果</div>
+                <div class="loading" id="reportLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>正在生成統計...</p>
+                </div>
+                <div class="report-content" id="reportContent">統計結果將顯示在此</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="chart-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
